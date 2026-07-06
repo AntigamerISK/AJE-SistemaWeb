@@ -21,3 +21,12 @@ jobs:
         password: ${{ secrets.FTP_PASSWORD }}
         local-dir: ./  # Sube todos los archivos del repositorio
         server-dir: wp-content/themes/grogin/  # ⚠️ Ajustado ya que la cuenta FTP está anclada en public_html/
+        exclude: |
+          **/.git*
+          **/.git*/**
+          **/.github*/**
+          **/.agents*/**
+          guia_github_actions.md
+          documentacion_desarrollo.md
+          readme.txt
+
