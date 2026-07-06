@@ -20,4 +20,4 @@ jobs:
         username: ${{ secrets.FTP_USERNAME }}
         password: ${{ secrets.FTP_PASSWORD }}
         local-dir: ./  # Sube todos los archivos del repositorio
-        server-dir: public_html/wp-content/themes/grogin/  # ⚠️ Recuerda ajustar esta ruta al directorio de tu servidor
+        server-dir: wp-content/themes/grogin/  # ⚠️ Ajustado ya que la cuenta FTP está anclada en public_html/
