@@ -782,51 +782,5 @@ function aje_custom_theme_translations( $translated_text, $text, $domain ) {
     return $translated_text;
 }
 
-/*************************************************
-## CONFIGURACIÓN AUTOMÁTICA DE PORTADA Y WIDGETS
-*************************************************/
-add_action( 'init', 'aje_configure_homepage' );
-function aje_configure_homepage() {
-    if ( get_option( 'aje_homepage_configured_v2' ) === 'yes' ) {
-        return;
-    }
-
-    // 1. Cambiar ajustes de lectura: Portada -> Home (Home 1)
-    $home_page = get_page_by_title( 'Home' );
-    if ( $home_page ) {
-        update_option( 'show_on_front', 'page' );
-        update_option( 'page_on_front', $home_page->ID );
-        
-        $blog_page = get_page_by_title( 'Blog' );
-        if ( $blog_page ) {
-            update_option( 'page_for_posts', $blog_page->ID );
-        }
-    }
-
-    // 2. Enviar páginas extra (Home 2 a 6) a la papelera
-    $paginas_extra = array( 'Home 2', 'Home 3', 'Home 4', 'Home 5', 'Home 6' );
-    foreach ( $paginas_extra as $titulo_pagina ) {
-        $pagina = get_page_by_title( $titulo_pagina );
-        if ( $pagina ) {
-            wp_trash_post( $pagina->ID );
-        }
-    }
-
-    // 3. Limpiar la barra lateral de la tienda (shop-sidebar) de widgets obsoletos
-    $sidebars_widgets = get_option( 'sidebars_widgets' );
-    if ( isset( $sidebars_widgets['shop-sidebar'] ) && is_array( $sidebars_widgets['shop-sidebar'] ) ) {
-        $clean_widgets = array();
-        foreach ( $sidebars_widgets['shop-sidebar'] as $widget_id ) {
-            // Eliminar widgets de blog comunes ('archives' y 'categories')
-            if ( strpos( $widget_id, 'archives' ) === false && strpos( $widget_id, 'categories' ) === false ) {
-                $clean_widgets[] = $widget_id;
-            }
-        }
-        $sidebars_widgets['shop-sidebar'] = $clean_widgets;
-        update_option( 'sidebars_widgets', $sidebars_widgets );
-    }
-
-    update_option( 'aje_homepage_configured_v2', 'yes' );
-}
 
 
