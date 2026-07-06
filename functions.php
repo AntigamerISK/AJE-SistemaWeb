@@ -749,3 +749,81 @@ function grogin_display_lowest_price_30_days() {
     }
 }
 
+/*************************************************
+## TRADUCCIONES PERSONALIZADAS DE CABECERA Y BUSCADOR
+*************************************************/
+add_filter( 'gettext', 'aje_custom_theme_translations', 20, 3 );
+function aje_custom_theme_translations( $translated_text, $text, $domain ) {
+    if ( 'grogin' === $domain ) {
+        switch ( $text ) {
+            case 'Your Cart':
+                $translated_text = 'Mi Carrito';
+                break;
+            case 'Wishlist':
+                $translated_text = 'Favoritos';
+                break;
+            case 'Account':
+                $translated_text = 'Mi Cuenta';
+                break;
+            case 'Search for products, categories or brands...':
+                $translated_text = 'Buscar productos, categorías o marcas...';
+                break;
+            case 'Trending Products':
+                $translated_text = 'Más Vendidos';
+                break;
+            case 'Almost Finished':
+                $translated_text = 'Por Agotarse';
+                break;
+            case 'Shop Now':
+                $translated_text = 'Comprar';
+                break;
+        }
+    }
+    return $translated_text;
+}
+
+/*************************************************
+## MIGRACIÓN AUTOMÁTICA DE CATEGORÍAS EN ESPAÑOL
+*************************************************/
+add_action( 'init', 'aje_migrate_product_categories' );
+function aje_migrate_product_categories() {
+    // Si ya se ejecutó, no hacer nada
+    if ( get_option( 'aje_categories_migrated_v1' ) === 'yes' ) {
+        return;
+    }
+
+    // 1. Obtener todas las categorías de productos actuales
+    $terms = get_terms( array(
+        'taxonomy'   => 'product_cat',
+        'hide_empty' => false,
+    ) );
+
+    // 2. Eliminar categorías en inglés (excepto la por defecto 'uncategorized' o 'sin-categorizar')
+    if ( ! empty( $terms ) && ! is_wp_error( $terms ) ) {
+        foreach ( $terms as $term ) {
+            if ( $term->slug !== 'uncategorized' && $term->slug !== 'sin-categorizar' ) {
+                wp_delete_term( $term->term_id, 'product_cat' );
+            }
+        }
+    }
+
+    // 3. Crear las nuevas categorías en español
+    $nuevas_categorias = array(
+        'Bebidas y Gaseosas',
+        'Abarrotes y Alimentos',
+        'Lácteos y Embutidos',
+        'Snacks y Confitería',
+        'Limpieza del Hogar',
+        'Cuidado Personal'
+    );
+
+    foreach ( $nuevas_categorias as $cat_name ) {
+        if ( ! term_exists( $cat_name, 'product_cat' ) ) {
+            wp_insert_term( $cat_name, 'product_cat' );
+        }
+    }
+
+    // Guardar estado en base de datos
+    update_option( 'aje_categories_migrated_v1', 'yes' );
+}
+
