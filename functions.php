@@ -787,7 +787,7 @@ function aje_custom_theme_translations( $translated_text, $text, $domain ) {
 *************************************************/
 add_action( 'init', 'aje_configure_homepage' );
 function aje_configure_homepage() {
-    if ( get_option( 'aje_homepage_configured_v1' ) === 'yes' ) {
+    if ( get_option( 'aje_homepage_configured_v2' ) === 'yes' ) {
         return;
     }
 
@@ -803,7 +803,16 @@ function aje_configure_homepage() {
         }
     }
 
-    // 2. Limpiar la barra lateral de la tienda (shop-sidebar) de widgets obsoletos
+    // 2. Enviar páginas extra (Home 2 a 6) a la papelera
+    $paginas_extra = array( 'Home 2', 'Home 3', 'Home 4', 'Home 5', 'Home 6' );
+    foreach ( $paginas_extra as $titulo_pagina ) {
+        $pagina = get_page_by_title( $titulo_pagina );
+        if ( $pagina ) {
+            wp_trash_post( $pagina->ID );
+        }
+    }
+
+    // 3. Limpiar la barra lateral de la tienda (shop-sidebar) de widgets obsoletos
     $sidebars_widgets = get_option( 'sidebars_widgets' );
     if ( isset( $sidebars_widgets['shop-sidebar'] ) && is_array( $sidebars_widgets['shop-sidebar'] ) ) {
         $clean_widgets = array();
@@ -817,6 +826,7 @@ function aje_configure_homepage() {
         update_option( 'sidebars_widgets', $sidebars_widgets );
     }
 
-    update_option( 'aje_homepage_configured_v1', 'yes' );
+    update_option( 'aje_homepage_configured_v2', 'yes' );
 }
+
 
