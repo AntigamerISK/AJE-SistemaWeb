@@ -1,0 +1,23 @@
+name: Despliegue Automático del Tema AJE
+
+on:
+  push:
+    branches:
+      - main  # Se activa automáticamente al subir código a la rama main
+
+jobs:
+  web-deploy:
+    name: Subiendo cambios al Hosting
+    runs-on: ubuntu-latest
+    steps:
+    - name: 🚚 Obtener la última versión del código
+      uses: actions/checkout@v3
+
+    - name: 🚀 Subir archivos por FTP/SFTP
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+      with:
+        server: ${{ secrets.FTP_SERVER }}
+        username: ${{ secrets.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
+        local-dir: ./  # Sube todos los archivos del repositorio
+        server-dir: public_html/wp-content/themes/grogin/  # ⚠️ Recuerda ajustar esta ruta al directorio de tu servidor
